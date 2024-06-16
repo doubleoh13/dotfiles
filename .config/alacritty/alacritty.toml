@@ -1,0 +1,23 @@
+import = [
+	"~/.config/alacritty/catppuccin-mocha.toml"
+]
+
+[window]
+opacity = 0.85
+blur = true
+
+[window.padding]
+x = 15
+y = 15
+
+[scrolling]
+history = 100000
+
+[font]
+size = 14
+
+[font.normal]
+family = "JetBrainsMono NF"
+
+[mouse]
+hide_when_typing = true
