@@ -1,3 +1,4 @@
 [submodule ".config/nvim"]
 	path = .config/nvim
-	url = https://github.com/doubleoh13/kickstart.nvim
+	url = git@github.com:doubleoh13/kickstart.nvim
+	branch = master
