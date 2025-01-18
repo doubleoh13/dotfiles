@@ -57,7 +57,6 @@ function determinePath($path) {
         checkConfig -os 'windows' -pathName $pathName
     }
     elseif ($null -ne $config['linux'][$pathName] -and $IsLinux) {
-        log "Checking Config"
         checkConfig -os 'linux' -pathName $pathName
     }
     else {
