@@ -59,7 +59,7 @@
         },
         {
           "powerline_symbol": "\ue0b0",
-          "template": "{{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }} ",
+          "template": "{{ if false }}{{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }} {{ end }}",
           "foreground": "p:surface0",
           "background": "p:blue",
           "type": "session",
@@ -67,9 +67,9 @@
         },
         {
           "properties": {
-            "style": "folder"
+            "style": "full"
           },
-          "template": " \uea83 {{ path .Path .Location }} ",
+          "template": " {{ path .Path .Location }} ",
           "foreground": "p:surface0",
           "powerline_symbol": "\ue0b0",
           "background": "p:pink",
