@@ -17,6 +17,13 @@ function Resolve-PathSafe($path) {
     $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
 }
 
+function defaultPath($pathName) {
+    [PSObject] @{
+        Link   = Resolve-PathSafe "~/.$($pathName)"
+        Target = Resolve-PathSafe $pathName
+    }
+}
+
 function checkConfig($os, $pathName) {
     if ($config[$os].length -ge 0) {
         if ($null -ne $config[$os][$pathName]) {
