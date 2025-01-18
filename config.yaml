@@ -5,12 +5,13 @@ skip_processing:
   - install.ps1
 linux:
   skip_processing: []
-  powershell:
-    - ~/.config/powershell
+  nvim: ~/.config/nvim
+  powershell: ~/.config/powershell
   tmux: ~/.config/tmux
 windows:
   skip_processing:
     - zshrc
+  nvim: "%LOCALAPPDATA%/nvim"
   powershell:
     - "%MYDOCUMENTS%/WindowsPowerShell"
     - "%MYDOCUMENTS%/PowerShell"
