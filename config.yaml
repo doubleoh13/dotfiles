@@ -7,6 +7,7 @@ linux:
   skip_processing: []
   powershell:
     - ~/.config/powershell
+  tmux: ~/.config/tmux
 windows:
   skip_processing:
     - zshrc
