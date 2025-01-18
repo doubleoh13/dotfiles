@@ -9,7 +9,6 @@ fi
 
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.config/composer/vendor/bin:$PATH"
-PATH="$HOME/.fzf/bin:$PATH"
 PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH
 
@@ -85,11 +84,15 @@ alias ports="netstat -tulnp"
 alias wip="git add . && git commit -m 'wip'"
 alias nah="git reset --hard && git clean -df"
 
-eval "$(fzf --zsh)"
 # Use the Windows ssh client in WSL
 if [ "$IS_WSL" = true ]; then
   alias ssh-add="ssh-add.exe"
   alias ssh='ssh-add.exe -l > /dev/null || ssh-add.exe && ssh.exe'
+fi
+
+# If fzf is installed, source it
+if [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
 fi
 
 eval "$(zoxide init --cmd cd zsh)"
