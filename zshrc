@@ -9,6 +9,7 @@ fi
 
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.config/composer/vendor/bin:$PATH"
+PATH="$HOME/.cargo/bin:$PATH"
 PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH
 
@@ -95,6 +96,7 @@ if [ -f ~/.fzf.zsh ]; then
   source ~/.fzf.zsh
 fi
 
+test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 eval "$(zoxide init --cmd cd zsh)"
 
 eval "$(oh-my-posh init zsh --config ~/.omp.json)"
