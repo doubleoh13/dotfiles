@@ -1,0 +1,5 @@
+[user]
+	name = Jake Richhart
+	email = jake@jakerichhart.com
+[core]
+	autocrlf = true
