@@ -1,9 +1,17 @@
+# This script is based on work by drmohundro
+# Original source: https://github.com/drmohundro/dotfiles/blob/main/install.ps1
+# License: MIT (https://opensource.org/licenses/MIT)
+#
+# Modifications made by Jake Richhart (January 2025):
+# - Removed macos as I don't use it
+# - Added ability to skip_processing on a per-os basis
+
 param (
     [switch]
     $whatIf
 )
 
-$config = Get-Content ./overrides.json | ConvertFrom-Json -AsHashtable
+$config = Get-Content ./config.json | ConvertFrom-Json -AsHashtable
 
 if ($IsWindows) {
     $documentsPath = [Environment]::GetFolderPath('MyDocuments')
@@ -93,6 +101,8 @@ function main {
 
         if ($config.skip_processing -contains $file.Name) { return }
         if ($file.Name.StartsWith('.')) { return }
+        if ($IsWindows -and $config.windows.skip_processing -contains $file.Name) { return }
+        if ($IsLinux -and $config.linux.skip_processing -contains $file.Name) { return }
 
         determinePath $file | ForEach-Object {
             if ((Test-Path $_.Target) -and $null -ne (Get-Item $file).LinkType) {
