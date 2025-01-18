@@ -1,0 +1,133 @@
+
+set number relativenumber
+set showmode
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set wrapscan
+set cursorline
+set guicursor
+set scrolloff=5
+set sidescrolloff=10
+set clipboard=ideaput
+
+set multiple-cursors
+set commentary
+set surround
+set ideajoin
+Plug 'machakann/vim-highlightedyank'
+set NERDTree
+set easymotion
+set which-key
+
+set notimeout
+let g:WhichKey_ShowVimActions = "true"
+
+nnoremap \ :NERDTreeFocus<CR>
+
+let mapleader = " "
+
+vnoremap K :m '<-2<CR>gv=gv
+vnoremap J :m '>+1<CR>gv=gv
+
+nnoremap J mzJ`z
+nnoremap <c-d> <c-d>zz
+nnoremap <c-u> <c-u>zz
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" greatest remap ever
+let g:WhichKeyDesc_past_without_overriding = '<leader>p Paste without overriding clipboard'
+xnoremap <leader>p \"_dP
+
+" next greatest remap ever
+nnoremap <leader>y \"+y
+vnoremap <leader>y \"+y
+nnoremap <leader>Y \"+Y
+nnoremap <leader>p \"+p
+nnoremap <leader>P \"+P
+nnoremap <leader>d \"_d
+vnoremap <leader>d \"_d
+let g:WhichKeyDesc_yank_to_clipboard_normal = '<leader>y Yank to system clipboard'
+let g:WhichKeyDesc_yank_to_clipboard_visual = '<leader>y Yank to system clipboard'
+let g:WhichKeyDesc_yank_line_to_clipboard = '<leader>Y Yank line to system clipboard'
+let g:WhichKeyDesc_paste_from_clipboard_normal = '<leader>p Paste from system clipboard'
+let g:WhichKeyDesc_paste_from_clipboard_above = '<leader>P Paste from system clipboard above'
+let g:WhichKeyDesc_delete_without_yank_normal = '<leader>d Delete without yank'
+let g:WhichKeyDesc_delete_without_yank_visual = '<leader>d Delete without yank'
+
+
+" edit ideavim config
+nnoremap <leader>vv :e ~/.ideavimrc<CR>
+nnoremap <leader>vr :source ~/.ideavimrc<CR>
+let g:WhichKeyDesc_ideavimrc = '<leader>v IdeaVim Config'
+let g:WhichKeyDesc_edit_ideavimrc = '<leader>vv Edit ~/.ideavimrc'
+let g:WhichKeyDesc_reload_ideavimrc = '<leader>vr Reload ~/.ideavimrc'
+
+
+" don't lose selection when indenting
+vnoremap < <gv
+vnoremap > >gv
+vnoremap = =gv
+
+" clear search highlighting
+nnoremap <ESC> :nohlsearch<CR>
+
+nnoremap <c-o> :action Back<cr>
+nnoremap <c-i> :action Forward<cr>
+
+nmap <leader>e :action RecentFiles<CR>
+let g:WhichKeyDesc_recent_files = '<leader>e Recent Files'
+nmap <leader>a :action FindInPath<CR>
+let g:WhichKeyDesc_find_in_path = '<leader>a Find in Files'
+nmap gr :action ShowUsages<CR>
+nmap gi :action GotoImplementation<CR>
+nmap gs :action GotoSuperMethod<CR>
+map gh <Action>(ShowErrorDescription)
+let g:WhichKeyDesc_gr = 'gr Show Usages'
+let g:WhichKeyDesc_gi = 'gi Go to Implementation'
+let g:WhichKeyDesc_gs = 'gs Go to Super Method'
+let g:WhichKeyDesc_gh = 'gh Show Error Description'
+
+map <leader>tt :action RunClass<CR>
+map <leader>tr :action Rerun<CR>
+map <leader>tf :action RerunFailedTests<CR>
+let g:WhichKeyDesc_t = '<leader>t Tests'
+let g:WhichKeyDesc_tt = '<leader>tt Run highlighted test'
+let g:WhichKeyDesc_tr = '<leader>tr Rerun last test'
+let g:WhichKeyDesc_tf = '<leader>tf Rerun failed tests'
+
+nmap <C-k> :action NextTab<CR>
+nmap <C-j> :action PreviousTab<CR>
+
+nmap <C-p> :action ParameterInfo<CR>
+imap <C-p> <C-o>:action ParameterInfo<CR>
+nmap <leader>n :action GotoNextError<CR>
+nmap <leader>N :action GotoPreviousError<CR>
+
+nmap <leader>ri :action Inline<CR>
+nmap <leader>rr :action RenameElement<CR>
+nmap <leader>riv :action IntroduceVariable<CR>
+vmap <leader>riv :action IntroduceVariable<CR>
+nmap <leader>rem :action ExtractMethod<CR>
+vmap <leader>rem :action ExtractMethod<CR>
+nmap <leader>rm :action Move<CR>
+nmap <leader>ro :action OptimizeImports<CR>
+nmap <leader>rG :action Generate<CR>
+let g:WhichKeyDesc_r = '<leader>r Refactor...'
+let g:WhichKeyDesc_rr = '<leader>rr Rename Element'
+let g:WhichKeyDesc_riv = '<leader>riv Introduce Variable'
+let g:WhichKeyDesc_rem = '<leader>rem Extract Method'
+let g:WhichKeyDesc_rm = '<leader>rm Move'
+let g:WhichKeyDesc_ro = '<leader>ro Optimize Imports'
+let g:WhichKeyDesc_rG = '<leader>rG Generate'
+
+nmap <leader>f  :action ReformatCode<CR>
+
+nmap <, :action MoveElementLeft<CR>
+nmap >, :action MoveElementRight<CR>
+
+nmap <leader>Gr :action Vcs.RollbackChangedLines<CR>
+let g:WhichKeyDesc_G = '<leader>G Git'
+let g:WhichKeyDesc_Gr = '<leader>Gr Rollback Changed Lines'
