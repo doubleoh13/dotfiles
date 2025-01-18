@@ -10,6 +10,7 @@ linux:
   tmux: ~/.config/tmux
 windows:
   skip_processing:
+    - tmux
     - zshrc
   nvim: "%LOCALAPPDATA%/nvim"
   powershell:
