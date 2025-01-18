@@ -1,0 +1,16 @@
+.idea
+.vscode
+
+
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+# ignore local profile installed modules
+powershell/Modules/

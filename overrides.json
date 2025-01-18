@@ -1,0 +1,21 @@
+{
+    "skip_processing": [
+        "common",
+        "linux",
+        "windows",
+        "README.md",
+        "overrides.json",
+        "install.ps1"
+    ],
+    "linux": {
+        "powershell": [
+            "~/.config/powershell"
+        ]
+    },
+    "windows": {
+        "powershell": [
+            "%MYDOCUMENTS%/WindowsPowerShell",
+            "%MYDOCUMENTS%/PowerShell"
+        ]
+    }
+}
