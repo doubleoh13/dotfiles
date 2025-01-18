@@ -1,11 +1,17 @@
-if command -v keychain >/dev/null 2>&1; then
-  eval $(keychain --eval --quiet id_rsa)
+if grep -q "microsoft" /proc/version 2>/dev/null; then
+  # We are in WSL. Lets set some things up
+  export IS_WSL=true
+  # Make git use the Windows ssh client in WSL
+  export GIT_SSH_COMMAND="ssh.exe"
+else
+  export IS_WSL=false
 fi
 
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.config/composer/vendor/bin:$PATH"
 PATH="$HOME/.fzf/bin:$PATH"
 PATH="/opt/mssql-tools18/bin:$PATH"
+export PATH
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
@@ -80,6 +86,12 @@ alias wip="git add . && git commit -m 'wip'"
 alias nah="git reset --hard && git clean -df"
 
 eval "$(fzf --zsh)"
+# Use the Windows ssh client in WSL
+if [ "$IS_WSL" = true ]; then
+  alias ssh-add="ssh-add.exe"
+  alias ssh='ssh-add.exe -l > /dev/null || ssh-add.exe && ssh.exe'
+fi
+
 eval "$(zoxide init --cmd cd zsh)"
 
 eval "$(oh-my-posh init zsh --config ~/.omp.json)"
