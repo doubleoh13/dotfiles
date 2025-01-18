@@ -2,6 +2,7 @@
     "skip_processing": [
         "README.md",
         "config.json",
+        "install",
         "install.ps1"
     ],
     "linux": {
