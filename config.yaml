@@ -1,0 +1,15 @@
+skip_processing:
+  - README.md
+  - config.yaml
+  - install
+  - install.ps1
+linux:
+  skip_processing: []
+  powershell:
+    - ~/.config/powershell
+windows:
+  skip_processing:
+    - zshrc
+  powershell:
+    - "%MYDOCUMENTS%/WindowsPowerShell"
+    - "%MYDOCUMENTS%/PowerShell"

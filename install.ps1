@@ -23,7 +23,26 @@ if ($IsWindows -and $Execute) {
     }
 }
 
-$config = Get-Content ./config.json | ConvertFrom-Json -AsHashtable
+# Check if the PowerShell-YAML module is installed
+if (-not (Get-Module -ListAvailable -Name PowerShell-YAML)) {
+    Write-Host "PowerShell-YAML module is not installed. Installing now..." -ForegroundColor Yellow
+    
+    # Attempt to install the module
+    try {
+        Install-Module -Name PowerShell-YAML -Scope CurrentUser -Force -ErrorAction Stop
+        Write-Host "PowerShell-YAML module installed successfully!" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Failed to install PowerShell-YAML module. Please install it manually." -ForegroundColor Red
+        exit 1
+    }
+}
+
+# Import the module
+Import-Module PowerShell-YAML
+
+$config = Get-Content "./config.yaml" | ConvertFrom-Yaml
+
 
 if ($IsWindows) {
     $documentsPath = [Environment]::GetFolderPath('MyDocuments')
