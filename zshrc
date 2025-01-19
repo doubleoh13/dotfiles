@@ -99,4 +99,4 @@ fi
 test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 eval "$(zoxide init --cmd cd zsh)"
 
-eval "$(oh-my-posh init zsh --config ~/.omp.json)"
+eval "$(oh-my-posh init zsh --config ~/.omp.yaml)"
