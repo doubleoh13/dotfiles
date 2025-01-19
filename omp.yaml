@@ -27,17 +27,6 @@ palette:
   teal: "#94e2d5"
   text: "#cdd6f4"
   yellow: "#f9e2af"
-secondary_prompt:
-  template: "\uf178 "
-  foreground: p:text
-  background: transparent
-terminal_background: p:base
-console_title_template: "{{ .Shell }} in {{ .Folder }}"
-upgrade:
-  source: cdn
-  interval: 168h
-  auto: false
-  notice: false
 blocks:
 - type: prompt
   alignment: left
@@ -45,77 +34,88 @@ blocks:
   - leading_diamond: 
     template: "{{.Icon}} "
     foreground: p:surface0
-    background: p:blue
+    background_templates:
+      - "{{ if .Root }}p:red{{ end }}"
+      - "{{ if not .Root }}p:blue{{ end }}"
     type: os
     style: diamond
-  - template: "{{ if false }}{{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }} {{ end }}"
+  - properties:
+      mapped_shell_names:
+        pwsh: PS
+    powerline_symbol: "\ue0b4"
+    template: "{{ .Name }} "
     foreground: p:surface0
-    powerline_symbol: 
     background: p:blue
+    background_templates:
+      - "{{ if .Root }}p:red{{ end }}"
+    type: shell
+    style: powerline
+  - template: "\uf0e7"
+    foreground: p:surface0
+    powerline_symbol: "\ue0b4"
+    background: p:red
+    type: root
+    style: powerline
+  - template: "{{ if .SSHSession }}\ueba9 {{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }}{{ end }}"
+    foreground: p:surface0
+    powerline_symbol: "\ue0b4"
+    background: p:blue
+    background_templates:
+      - "{{ if .Root }}p:red{{ end }}"
     type: session
     style: powerline
   - properties:
       style: full
-    template: " {{ path .Path .Location }} "
+    template: " {{ .Path }} "
     foreground: p:surface0
-    powerline_symbol: 
+    powerline_symbol: "\ue0b4"
     background: p:pink
     type: path
     style: powerline
   - properties:
-      branch_max_length: 25.0
+      branch_icon: ''
+      commit_icon: '@'
       fetch_status: true
-      fetch_upstream_icon: true
-    template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+    template: ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+    #template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
     foreground: p:surface0
-    powerline_symbol: 
+    powerline_symbol: "\ue0b4"
     background: p:lavender
     type: git
     style: powerline
-  - template: " \uf0e7 "
-    foreground: p:surface0
-    powerline_symbol: 
-    background: p:yellow
-    type: root
-    style: powerline
-  - properties:
-      always_enabled: true
-    trailing_diamond: 
-    template: " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
-    foreground: p:surface0
-    background: p:green
-    type: status
-    style: diamond
-    background_templates:
-    - "{{ if gt .Code 0 }}p:red{{ end }}"
   newline: true
 - type: prompt
   alignment: right
   segments:
-  - properties:
-      mapped_shell_names:
-        pwsh: PS
-    leading_diamond: 
-    trailing_diamond: 
-    template: " {{ .Name }} "
-    foreground: p:surface0
-    background: p:pink
-    type: shell
-    style: diamond
-  - trailing_diamond: 
-    template: " at {{ .CurrentDate | date \"15:04:05\" }}"
-    foreground: p:surface0
-    background: p:blue
-    type: time
-    style: diamond
+  - template: "{{ .FormattedMs }}"
+    foreground: p:yellow
+    background: transparent
+    type: executiontime
+    style: plain
+    properties:
+      threshhold: 5000
 - type: prompt
   alignment: left
+  newline: true
   segments:
-  - template: 󰅂
-    foreground: p:text
+  - template: "❯ "
+    foreground_templates:
+    - "{{if gt .Code 0}}red{{end}}"
+    - "{{if eq .Code 0}}lavender{{end}}"
     background: transparent
     type: text
     style: plain
+transient_prompt:
+  style: plain
+  template: "❯ "
+  background: transparent
+  foreground_templates:
+    - "{{if gt .Code 0}}red{{end}}"
+    - "{{if eq .Code 0}}lavender{{end}}"
+secondary_prompt:
+  template: "❯❯ "
+  foreground: p:lavender
+  background: transparent
 version: 3
 shell_integration: true
 enable_cursor_positioning: true
