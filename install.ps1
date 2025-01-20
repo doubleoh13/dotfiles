@@ -8,34 +8,38 @@
 # - Auto-elevates itself in Windows
 
 param (
-    [switch] $Execute,
-    [switch] $wasElevated
+  [switch] $Execute,
+  [switch] $wasElevated
 )
 
 # Windows requires elevated permissions to create the junctions, so let's elevate if necessary
-if ($IsWindows -and $Execute) {
-    # Check if the script is already running with elevated privileges
-    if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Write-Host "This script requires administrative privileges. Restarting with elevation..." -ForegroundColor Yellow
-        # Relaunch the script with elevation
-        Start-Process -FilePath "$PSHome\pwsh.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Execute -wasElevated" -Verb RunAs
-        exit
-    }
+if ($IsWindows -and $Execute)
+{
+  # Check if the script is already running with elevated privileges
+  if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+  {
+    Write-Host "This script requires administrative privileges. Restarting with elevation..." -ForegroundColor Yellow
+    # Relaunch the script with elevation
+    Start-Process -FilePath "$PSHome\pwsh.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Execute -wasElevated" -Verb RunAs
+    exit
+  }
 }
 
 # Check if the PowerShell-YAML module is installed
-if (-not (Get-Module -ListAvailable -Name PowerShell-YAML)) {
-    Write-Host "PowerShell-YAML module is not installed. Installing now..." -ForegroundColor Yellow
+if (-not (Get-Module -ListAvailable -Name PowerShell-YAML))
+{
+  Write-Host "PowerShell-YAML module is not installed. Installing now..." -ForegroundColor Yellow
     
-    # Attempt to install the module
-    try {
-        Install-Module -Name PowerShell-YAML -Scope CurrentUser -Force -ErrorAction Stop
-        Write-Host "PowerShell-YAML module installed successfully!" -ForegroundColor Green
-    }
-    catch {
-        Write-Host "Failed to install PowerShell-YAML module. Please install it manually." -ForegroundColor Red
-        exit 1
-    }
+  # Attempt to install the module
+  try
+  {
+    Install-Module -Name PowerShell-YAML -Scope CurrentUser -Force -ErrorAction Stop
+    Write-Host "PowerShell-YAML module installed successfully!" -ForegroundColor Green
+  } catch
+  {
+    Write-Host "Failed to install PowerShell-YAML module. Please install it manually." -ForegroundColor Red
+    exit 1
+  }
 }
 
 # Import the module
@@ -44,131 +48,164 @@ Import-Module PowerShell-YAML
 $config = Get-Content "./config.yaml" | ConvertFrom-Yaml
 
 
-if ($IsWindows) {
-    $documentsPath = [Environment]::GetFolderPath('MyDocuments')
-    $env:MYDOCUMENTS = $documentsPath
+if ($IsWindows)
+{
+  $documentsPath = [Environment]::GetFolderPath('MyDocuments')
+  $env:MYDOCUMENTS = $documentsPath
 }
 
-function log($msg, $type = "info") {
-    switch ($type) {
-        'info' {
-            Write-Host "  $msg" -ForegroundColor White
+function log($msg, $type = "info")
+{
+  switch ($type)
+  {
+    'info'
+    {
+      Write-Host "  $msg" -ForegroundColor White
+    }
+    'check'
+    {
+      Write-Host "  $msg" -ForegroundColor Cyan
+    }
+    'skip'
+    {
+      Write-Host "* $msg" -ForegroundColor Yellow
+    }
+    'link'
+    {
+      Write-Host "+ $msg" -ForegroundColor Green
+    }
+  }
+}
+function Resolve-PathSafe($path)
+{
+  $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+}
+
+function defaultPath($pathName)
+{
+  [PSObject] @{
+    Link   = Resolve-PathSafe "~/.$($pathName)"
+    Target = Resolve-PathSafe $pathName
+  }
+}
+
+function checkConfig($os, $pathName)
+{
+  if ($config[$os].length -ge 0)
+  {
+    if ($null -ne $config[$os][$pathName])
+    {
+      $config[$os][$pathName] | Foreach-Object {
+        [PSObject] @{
+          Link   = Resolve-PathSafe ([System.Environment]::ExpandEnvironmentVariables($_))
+          Target = Resolve-PathSafe $pathName
         }
-        'check' {
-            Write-Host "  $msg" -ForegroundColor Cyan
-        }
-        'skip' {
-            Write-Host "* $msg" -ForegroundColor Yellow
-        }
-        'link' {
-            Write-Host "+ $msg" -ForegroundColor Green
-        }
+      }
     }
-}
-function Resolve-PathSafe($path) {
-    $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+  } else
+  {
+    defaultPath $pathName
+  }
 }
 
-function defaultPath($pathName) {
-    [PSObject] @{
-        Link   = Resolve-PathSafe "~/.$($pathName)"
-        Target = Resolve-PathSafe $pathName
-    }
+function determinePath($path)
+{
+  log "Checking $path..." "check"
+
+  $pathName = $path.Name
+
+  if ($null -ne $config['windows'][$pathName] -and $IsWindows)
+  {
+    checkConfig -os 'windows' -pathName $pathName
+  } elseif ($null -ne $config['linux'][$pathName] -and $IsLinux)
+  {
+    checkConfig -os 'linux' -pathName $pathName
+  } else
+  {
+    defaultPath $pathName
+  }
 }
 
-function checkConfig($os, $pathName) {
-    if ($config[$os].length -ge 0) {
-        if ($null -ne $config[$os][$pathName]) {
-            $config[$os][$pathName] | Foreach-Object {
-                [PSObject] @{
-                    Link   = Resolve-PathSafe ([System.Environment]::ExpandEnvironmentVariables($_))
-                    Target = Resolve-PathSafe $pathName
-                }
-            }
-        }
+function linkFile($map)
+{
+  if (Test-Path $map.Link)
+  {
+    log "Skipping $($map.Link) as it already exists" "skip"
+    return
+  }
+
+  # validate that $map.Target's directory exists and create it if it doesn't
+  $targetDirectory = Split-Path $map.Target
+  if (-not (Test-Path $targetDirectory))
+  {
+    if (!$Execute)
+    {
+      log "Creating directory $targetDirectory" "info"
+    } else
+    {
+      New-Item -ItemType Directory -Path $targetDirectory
     }
-    else {
-        defaultPath $pathName
+  }
+
+  if (!$Execute)
+  {
+    log "Linking $($map.Link) to $($map.Target)" "link"
+  } else
+  {
+    if ((Get-Item $map.Target) -is [System.IO.DirectoryInfo] -and $IsWindows)
+    {
+      New-Item -Path $_.Link -ItemType Junction -Value $_.Target
+    } else
+    {
+      New-Item -Path $_.Link -ItemType SymbolicLink -Value $_.Target
     }
+  }
 }
 
-function determinePath($path) {
-    log "Checking $path..." "check"
+function main
+{
+  Get-ChildItem | ForEach-Object {
+    $file = $_
 
-    $pathName = $path.Name
+    if ($config.skip_processing -contains $file.Name)
+    { return 
+    }
+    if ($file.Name.StartsWith('.'))
+    { return 
+    }
+    if ($IsWindows -and $config.windows.skip_processing -contains $file.Name)
+    { return 
+    }
+    if ($IsLinux -and $config.linux.skip_processing -contains $file.Name)
+    { return 
+    }
 
-    if ($null -ne $config['windows'][$pathName] -and $IsWindows) {
-        checkConfig -os 'windows' -pathName $pathName
-    }
-    elseif ($null -ne $config['linux'][$pathName] -and $IsLinux) {
-        checkConfig -os 'linux' -pathName $pathName
-    }
-    else {
-        defaultPath $pathName
-    }
-}
-
-function linkFile($map) {
-    if (Test-Path $map.Link) {
-        log "Skipping $($map.Link) as it already exists" "skip"
+    determinePath $file | ForEach-Object {
+      if ((Test-Path $_.Target) -and $null -ne (Get-Item $file).LinkType)
+      {
         return
-    }
-
-    # validate that $map.Target's directory exists and create it if it doesn't
-    $targetDirectory = Split-Path $map.Target
-    if (-not (Test-Path $targetDirectory)) {
-        if (!$Execute) {
-            log "Creating directory $targetDirectory" "info"
-        }
-        else {
-            New-Item -ItemType Directory -Path $targetDirectory
-        }
-    }
-
-    if (!$Execute) {
-        log "Linking $($map.Link) to $($map.Target)" "link"
-    }
-    else {
-        if ((Get-Item $map.Target) -is [System.IO.DirectoryInfo] -and $IsWindows) {
-            New-Item -Path $_.Link -ItemType Junction -Value $_.Target
-        }
-        else {
-            New-Item -Path $_.Link -ItemType SymbolicLink -Value $_.Target
-        }
-    }
-}
-
-function main {
-    Get-ChildItem | ForEach-Object {
-        $file = $_
-
-        if ($config.skip_processing -contains $file.Name) { return }
-        if ($file.Name.StartsWith('.')) { return }
-        if ($IsWindows -and $config.windows.skip_processing -contains $file.Name) { return }
-        if ($IsLinux -and $config.linux.skip_processing -contains $file.Name) { return }
-
-        determinePath $file | ForEach-Object {
-            if ((Test-Path $_.Target) -and $null -ne (Get-Item $file).LinkType) {
-                return
-            }
+      }
             
-            linkFile $_
-        }
+      linkFile $_
     }
+  }
 }
 
-try {
-    Push-Location $PSScriptRoot
+try
+{
+  Push-Location $PSScriptRoot
 
-    if (!$Execute) {
-        Write-Host "Performing Dry Run. No changes will be make. To persist changes, rerun with -Execute"
-    }
-    main
+  if (!$Execute)
+  {
+    Write-Host "Performing Dry Run. No changes will be make. To persist changes, rerun with -Execute"
+  }
+  main
 
-    if ($wasElevated) {
-        Read-Host -Prompt "Complete! Press any key to close this window."
-    }
-}
-finally {
-    Pop-Location
+  if ($wasElevated)
+  {
+    Read-Host -Prompt "Complete! Press any key to close this window."
+  }
+} finally
+{
+  Pop-Location
 }

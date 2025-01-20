@@ -28,83 +28,83 @@ palette:
   text: "#cdd6f4"
   yellow: "#f9e2af"
 blocks:
-- type: prompt
-  alignment: left
-  segments:
-  - leading_diamond: 
-    template: "{{.Icon}} "
-    foreground: p:surface0
-    background_templates:
-      - "{{ if .Root }}p:red{{ end }}"
-      - "{{ if not .Root }}p:blue{{ end }}"
-    type: os
-    style: diamond
-  - properties:
-      mapped_shell_names:
-        pwsh: PS
-    powerline_symbol: "\ue0b4"
-    template: "{{ .Name }} "
-    foreground: p:surface0
-    background: p:blue
-    background_templates:
-      - "{{ if .Root }}p:red{{ end }}"
-    type: shell
-    style: powerline
-  - template: "\uf0e7"
-    foreground: p:surface0
-    powerline_symbol: "\ue0b4"
-    background: p:red
-    type: root
-    style: powerline
-  - template: "{{ if .SSHSession }}\ueba9 {{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }}{{ end }}"
-    foreground: p:surface0
-    powerline_symbol: "\ue0b4"
-    background: p:blue
-    background_templates:
-      - "{{ if .Root }}p:red{{ end }}"
-    type: session
-    style: powerline
-  - properties:
-      style: full
-    template: " {{ .Path }} "
-    foreground: p:surface0
-    powerline_symbol: "\ue0b4"
-    background: p:pink
-    type: path
-    style: powerline
-  - properties:
-      branch_icon: ''
-      commit_icon: '@'
-      fetch_status: true
-    template: ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
-    #template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
-    foreground: p:surface0
-    powerline_symbol: "\ue0b4"
-    background: p:lavender
-    type: git
-    style: powerline
-  newline: true
-- type: prompt
-  alignment: right
-  segments:
-  - template: "{{ .FormattedMs }}"
-    foreground: p:yellow
-    background: transparent
-    type: executiontime
-    style: plain
-    properties:
-      threshhold: 5000
-- type: prompt
-  alignment: left
-  newline: true
-  segments:
-  - template: "❯ "
-    foreground_templates:
-    - "{{if gt .Code 0}}red{{end}}"
-    - "{{if eq .Code 0}}lavender{{end}}"
-    background: transparent
-    type: text
-    style: plain
+  - type: prompt
+    alignment: left
+    segments:
+      - leading_diamond: 
+        template: "{{.Icon}} "
+        foreground: p:surface0
+        background_templates:
+          - "{{ if .Root }}p:red{{ end }}"
+          - "{{ if not .Root }}p:blue{{ end }}"
+        type: os
+        style: diamond
+      - properties:
+          mapped_shell_names:
+            pwsh: PS
+        powerline_symbol: "\ue0b4"
+        template: "{{ .Name }} "
+        foreground: p:surface0
+        background: p:blue
+        background_templates:
+          - "{{ if .Root }}p:red{{ end }}"
+        type: shell
+        style: powerline
+      - template: "\uf0e7"
+        foreground: p:surface0
+        powerline_symbol: "\ue0b4"
+        background: p:red
+        type: root
+        style: powerline
+      - template: "{{ if .SSHSession }}\ueba9 {{ .UserName }}{{ if .SSHSession }}@{{.HostName}}{{ end }}{{ end }}"
+        foreground: p:surface0
+        powerline_symbol: "\ue0b4"
+        background: p:blue
+        background_templates:
+          - "{{ if .Root }}p:red{{ end }}"
+        type: session
+        style: powerline
+      - properties:
+          style: full
+        template: " {{ .Path }} "
+        foreground: p:surface0
+        powerline_symbol: "\ue0b4"
+        background: p:pink
+        type: path
+        style: powerline
+      - properties:
+          branch_icon: ""
+          commit_icon: "@"
+          fetch_status: true
+        template: " {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>"
+        #template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+        foreground: p:surface0
+        powerline_symbol: "\ue0b4"
+        background: p:lavender
+        type: git
+        style: powerline
+    newline: true
+  - type: prompt
+    alignment: right
+    segments:
+      - template: "{{ .FormattedMs }}"
+        foreground: p:yellow
+        background: transparent
+        type: executiontime
+        style: plain
+        properties:
+          threshhold: 5000
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - template: "❯ "
+        foreground_templates:
+          - "{{if gt .Code 0}}red{{end}}"
+          - "{{if eq .Code 0}}lavender{{end}}"
+        background: transparent
+        type: text
+        style: plain
 transient_prompt:
   style: plain
   template: "❯ "
