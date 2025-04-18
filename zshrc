@@ -1,3 +1,6 @@
+# zmodload zsh/datetime
+# typeset -g ZSH_START_TIME=$EPOCHREALTIME
+
 if grep -q "microsoft" /proc/version 2>/dev/null; then
   # We are in WSL. Lets set some things up
   export IS_WSL=true
@@ -11,6 +14,7 @@ PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.config/composer/vendor/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
 PATH="/opt/mssql-tools18/bin:$PATH"
+PATH="$HOME/.phpenv/bin:$PATH"
 export PATH
 
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -29,8 +33,9 @@ export EDITOR=nvim
 autoload -U compinit && compinit
 
 # Add in zsh plugins
-zinit light gentslava/zsh-nvm
-zinit light zsh-users/zsh-syntax-highlighting
+#zinit light lukechilds/zsh-nvm
+zinit light mafredri/zsh-async
+zinit light allanjamesvestal/fast-zsh-nvm
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
@@ -100,3 +105,14 @@ test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/bre
 # eval "$(zoxide init --cmd cd zsh)"
 
 eval "$(oh-my-posh init zsh --config ~/.omp.yaml)"
+eval "$(phpenv init -)"
+
+if command -v step >/dev/null 2>&1; then
+  eval "$(step completion zsh)"
+fi
+
+zinit light zsh-users/zsh-syntax-highlighting
+
+# typeset -g ZSH_END_TIME=$EPOCHREALTIME
+# typeset -g ZSH_ELAPSED_TIME=$(($ZSH_END_TIME - $ZSH_START_TIME))
+# echo "zshrc load time: ${ZSH_ELAPSED_TIME}s"
