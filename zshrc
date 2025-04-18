@@ -25,6 +25,9 @@ export NVM_LAZY_LOAD=true
 export NVM_SILENT=true
 export EDITOR=nvim
 
+# Load completions
+autoload -U compinit && compinit
+
 # Add in zsh plugins
 zinit light gentslava/zsh-nvm
 zinit light zsh-users/zsh-syntax-highlighting
@@ -33,9 +36,6 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 zinit light zpm-zsh/clipboard
 zinit light doubleoh13/zsh-artisan
-
-# Load completions
-autoload -U compinit #&& compinit
 
 zinit cdreplay -q
 
@@ -67,7 +67,7 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza --color=always --icons 
 # Aliases
 if command -v eza >/dev/null 2>&1; then
   alias ls="eza --icons --git"
-  alias ll="eza -l --icons --git -a"
+  alias ll="eza -l --icons --git"
   alias la="eza -la --icons --git"
   alias lt="eza --tree --level=2 --long --icons --git"
 fi
@@ -97,6 +97,6 @@ if [ -f ~/.fzf.zsh ]; then
 fi
 
 test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-eval "$(zoxide init --cmd cd zsh)"
+# eval "$(zoxide init --cmd cd zsh)"
 
 eval "$(oh-my-posh init zsh --config ~/.omp.yaml)"

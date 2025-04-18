@@ -2,6 +2,9 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.have_nerd_font = true
 
+vim.g.node_host_prog = "/home/jrichhart/.nvm/versions/node/v22.14.0/bin/node"
+vim.cmd("let $PATH = '/home/jrichhart/.nvm/versions/node/v22.14.0/bin:' . $PATH")
+
 local opt = vim.opt
 
 opt.relativenumber = true
