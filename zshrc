@@ -1,15 +1,3 @@
-# zmodload zsh/datetime
-# typeset -g ZSH_START_TIME=$EPOCHREALTIME
-
-if grep -q "microsoft" /proc/version 2>/dev/null; then
-  # We are in WSL. Lets set some things up
-  export IS_WSL=true
-  # Make git use the Windows ssh client in WSL
-  export GIT_SSH_COMMAND="ssh.exe"
-else
-  export IS_WSL=false
-fi
-
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/.config/composer/vendor/bin:$PATH"
 PATH="$HOME/.cargo/bin:$PATH"
@@ -33,7 +21,6 @@ export EDITOR=nvim
 autoload -U compinit && compinit
 
 # Add in zsh plugins
-#zinit light lukechilds/zsh-nvm
 zinit light mafredri/zsh-async
 zinit light allanjamesvestal/fast-zsh-nvm
 zinit light zsh-users/zsh-completions
@@ -90,29 +77,23 @@ alias ports="netstat -tulnp"
 alias wip="git add . && git commit -m 'wip'"
 alias nah="git reset --hard && git clean -df"
 
-# Use the Windows ssh client in WSL
-if [ "$IS_WSL" = true ]; then
-  alias ssh-add="ssh-add.exe"
-  alias ssh='ssh-add.exe -l > /dev/null || ssh-add.exe && ssh.exe'
-fi
-
 # If fzf is installed, source it
 if [ -f ~/.fzf.zsh ]; then
   source ~/.fzf.zsh
 fi
 
 test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-# eval "$(zoxide init --cmd cd zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
 
 eval "$(oh-my-posh init zsh --config ~/.omp.yaml)"
-eval "$(phpenv init -)"
+if command -v step >/dev/null 2>&1; then
+  eval "$(phpenv init -)"
+fi
 
 if command -v step >/dev/null 2>&1; then
   eval "$(step completion zsh)"
 fi
 
 zinit light zsh-users/zsh-syntax-highlighting
-
-# typeset -g ZSH_END_TIME=$EPOCHREALTIME
-# typeset -g ZSH_ELAPSED_TIME=$(($ZSH_END_TIME - $ZSH_START_TIME))
-# echo "zshrc load time: ${ZSH_ELAPSED_TIME}s"
